@@ -32,7 +32,10 @@ export const MatchForm = ({ onActivityAdded }: MatchFormProps) => {
     faltas_sofridas: '',
     cartao: 'nenhum',
     desempenho: '',
-    chutes_defendidos: '',
+    defesas: '',
+    defesas_dificeis: '', 
+    gols_sofridos: '',
+    minutos_sem_sofrer_gol: '',
     penaltis_defendidos: '',
   });
 
@@ -63,9 +66,12 @@ export const MatchForm = ({ onActivityAdded }: MatchFormProps) => {
       faltas_sofridas: Number(formData.faltas_sofridas) || 0,
       cartao: formData.cartao,
       desempenho: Number(formData.desempenho) || 0,
-      chutes_defendidos: Number(formData.chutes_defendidos) || 0,
+      defesas: Number(formData.defesas) || 0,
+      defesas_dificeis: Number(formData.defesas_dificeis) || 0,
+      gols_sofridos: Number(formData.gols_sofridos) || 0,
+      minutos_sem_sofrer_gol: Number(formData.minutos_sem_sofrer_gol) || 0,
       penaltis_defendidos: Number(formData.penaltis_defendidos) || 0,
-    };
+      };
 
     console.log("Enviando para API:", JSON.stringify(dadosParaApi, null, 2));
 
@@ -105,7 +111,10 @@ export const MatchForm = ({ onActivityAdded }: MatchFormProps) => {
         faltas_sofridas: '',
         cartao: 'nenhum',
         desempenho: '',
-        chutes_defendidos: '',
+        defesas: '',
+       defesas_dificeis: '', 
+        gols_sofridos: '',
+        minutos_sem_sofrer_gol: '',
         penaltis_defendidos: '',
       });
 
@@ -367,27 +376,68 @@ export const MatchForm = ({ onActivityAdded }: MatchFormProps) => {
             />
           </div>
 
-          <div className="space-y-2">
-              <Label htmlFor="chutes_defendidos">Chutes Defendidos</Label>
+          {formData.posicao === 'goleiro' && (
+      <>
+        <h3 className="text-lg font-medium pt-4 border-t mt-4">Estatísticas de Goleiro</h3>
+        
+        <div className="grid grid-cols-2 gap-4">
+           <div className="space-y-2">
+              <Label htmlFor="gols_sofridos">Gols Sofridos</Label>
               <Input
-                id="chutes_defendidoss"
+                id="gols_sofridos"
                 type="number"
                 placeholder="0"
-                value={formData.chutes_defendidos}
-                onChange={(e) => setFormData({ ...formData, chutes_defendidos: e.target.value })}
+                value={formData.gols_sofridos}
+                onChange={(e) => setFormData({ ...formData, gols_sofridos: e.target.value })}
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="penaltis_defendidos">Penaltis Defendidos</Label>
+              <Label htmlFor="defesas">Total de Defesas</Label>
               <Input
-                id="penaltis_defendidoss"
+                id="defesas"
+                type="number"
+                placeholder="0"
+                value={formData.defesas}
+                onChange={(e) => setFormData({ ...formData, defesas: e.target.value })}
+              />
+            </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+           <div className="space-y-2">
+              <Label htmlFor="defesas_dificeis">Defesas Difíceis</Label>
+              <Input
+                id="defesas_dificeis"
+                type="number"
+                placeholder="0"
+                value={formData.defesas_dificeis}
+                onChange={(e) => setFormData({ ...formData, defesas_dificeis: e.target.value })}
+              />
+            </div>
+           <div className="space-y-2">
+              <Label htmlFor="penaltis_defendidos">Pênaltis Defendidos</Label>
+              <Input
+                id="penaltis_defendidos"
                 type="number"
                 placeholder="0"
                 value={formData.penaltis_defendidos}
                 onChange={(e) => setFormData({ ...formData, penaltis_defendidos: e.target.value })}
               />
             </div>
+        </div>
+        
+         <div className="space-y-2">
+            <Label htmlFor="minutos_sem_sofrer_gol">Minutos sem Sofrer Gol (Clean Sheet)</Label>
+            <Input
+              id="minutos_sem_sofrer_gol"
+              type="number"
+              placeholder="Ex: 90"
+              value={formData.minutos_sem_sofrer_gol}
+              onChange={(e) => setFormData({ ...formData, minutos_sem_sofrer_gol: e.target.value })}
+            />
+          </div>
+      </>
+    )}
 
           <Button type="submit" className="w-full bg-gradient-gold">
             Registrar Jogo
