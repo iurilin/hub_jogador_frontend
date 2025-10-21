@@ -1,4 +1,4 @@
-import { Target, Trophy, Clock, TrendingUp, Mail, MapPin, Calendar, ArrowLeft, Edit, Plus, Trash2, User as UserIcon, Activity } from "lucide-react";
+import { Target, Trophy, Clock, TrendingUp, Mail, MapPin, Calendar, ArrowLeft, Edit, Plus, Trash2, User as UserIcon, Activity, ShieldCheck, Hand } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { StatsCard } from "../components/StatsCard";
@@ -31,6 +31,10 @@ type Stats = {
   totalAssistencias: number;
   totalMinutos: number;
   totalJogos: number;
+  totalDefesas?: number;
+  totalDefesasDificeis?: number;
+  totalPenaltisDefendidos?: number;
+  totalJogosSemSofrerGol?: number;
 };
 
 const Profile = () => {
@@ -39,7 +43,10 @@ const Profile = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [games, setGames] = useState<Jogo[]>([]);
   const [trainings, setTrainings] = useState<Treino[]>([]);
-  const [stats, setStats] = useState<Stats>({ totalGols: 0, totalAssistencias: 0, totalMinutos: 0, totalJogos: 0 });
+  const [stats, setStats] = useState<Stats>({
+    totalGols: 0, totalAssistencias: 0, totalMinutos: 0, totalJogos: 0,
+    totalDefesas: 0, totalDefesasDificeis: 0, totalPenaltisDefendidos: 0, totalJogosSemSofrerGol: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   const [editData, setEditData] = useState<UserProfile>({ nome: "", email: "", posicao: ""});
@@ -86,6 +93,10 @@ const Profile = () => {
         totalAssistencias: gamesData.reduce((acc, jogo) => acc + (Number(jogo.assistencias) || 0), 0),
         totalMinutos: gamesData.reduce((acc, jogo) => acc + (Number(jogo.tempo_jogado) || 0), 0),
         totalJogos: gamesData.length,
+        totalDefesas: gamesData.reduce((acc, jogo) => acc + (Number(jogo.defesas) || 0), 0),
+        totalDefesasDificeis: gamesData.reduce((acc, jogo) => acc + (Number(jogo.defesas_dificeis) || 0), 0),
+        totalPenaltisDefendidos: gamesData.reduce((acc, jogo) => acc + (Number(jogo.penaltis_defendidos) || 0), 0),
+        totalJogosSemSofrerGol: gamesData.filter(jogo => Number(jogo.gols_sofridos) === 0).length,
       };
       setStats(calculatedStats);
 
@@ -129,7 +140,7 @@ const Profile = () => {
 
     } catch (error: any) {
         toast.error(`Erro ao salvar dados: ${error.message}`);
-        setIsEditDialogOpen(false); 
+        setIsEditDialogOpen(false);
         return;
     }
 
@@ -208,6 +219,29 @@ const Profile = () => {
   if (isLoading) { return <div className="min-h-screen flex items-center justify-center"><p>Carregando perfil...</p></div>; }
   if (!user) { return <div className="min-h-screen flex items-center justify-center"><p>Não foi possível carregar o perfil.</p></div>; }
 
+  const renderStatsCards = () => {
+    if (user.posicao === 'Goleiro') {
+      return (
+        <>
+          <StatsCard title="Defesas" value={stats.totalDefesas ?? 0} icon={Hand} />
+          <StatsCard title="Defesas Difíceis" value={stats.totalDefesasDificeis ?? 0} icon={ShieldCheck} />
+          <StatsCard title="Pênaltis Defendidos" value={stats.totalPenaltisDefendidos ?? 0} icon={Hand} />
+          <StatsCard title="Jogos Sem Sofrer Gol" value={stats.totalJogosSemSofrerGol ?? 0} icon={Clock} trend={`${stats.totalJogos} jogos`}/>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <StatsCard title="Total de Gols" value={stats.totalGols} icon={Target} />
+          <StatsCard title="Assistências" value={stats.totalAssistencias} icon={Trophy} />
+          <StatsCard title="Minutos Jogados" value={stats.totalMinutos.toLocaleString('pt-BR')} icon={Clock} trend={`${stats.totalJogos} jogos`}/>
+          <StatsCard title="Gols por Jogo" value={stats.totalJogos > 0 ? (stats.totalGols / stats.totalJogos).toFixed(1) : "0.0"} icon={TrendingUp} />
+        </>
+      );
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-gradient-field text-primary-foreground py-6 shadow-glow">
@@ -284,16 +318,13 @@ const Profile = () => {
         <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Estatísticas Gerais</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatsCard title="Total de Gols" value={stats.totalGols} icon={Target} />
-                <StatsCard title="Assistências" value={stats.totalAssistencias} icon={Trophy} />
-                <StatsCard title="Minutos Jogados" value={stats.totalMinutos.toLocaleString('pt-BR')} icon={Clock} trend={`${stats.totalJogos} jogos`}/>
-                <StatsCard title="Gols por Jogo" value={stats.totalJogos > 0 ? (stats.totalGols / stats.totalJogos).toFixed(1) : "0.0"} icon={TrendingUp} />
+                {renderStatsCards()}
             </div>
         </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <Card className="shadow-card"> <CardHeader><CardTitle>Desempenho Mensal</CardTitle></CardHeader> <CardContent>  </CardContent> </Card>
-            <Card className="shadow-card"> <CardHeader><CardTitle>Recordes Pessoais</CardTitle></CardHeader> <CardContent>  </CardContent> </Card>
+            <Card className="shadow-card"> <CardHeader><CardTitle>Desempenho Mensal</CardTitle></CardHeader> <CardContent> </CardContent> </Card>
+            <Card className="shadow-card"> <CardHeader><CardTitle>Recordes Pessoais</CardTitle></CardHeader> <CardContent> </CardContent> </Card>
          </div>
 
         <div className="mb-8">
