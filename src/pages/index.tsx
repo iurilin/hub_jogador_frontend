@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { toast } from "sonner";
 import type { Jogo, Treino } from "../../types";
 
-const API_URL = "https://hub-jogador-app.vercel.app/";
+const API_URL = "http://127.0.0.1:5000";
 
 type Stats = {
   totalGols: number;
