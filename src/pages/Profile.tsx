@@ -16,7 +16,7 @@ import { MatchForm } from "../components/MatchForm";
 import { toast } from "sonner";
 import type { Jogo, Treino } from "../../types";
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "https://hub-jogador-app.vercel.app/";
 
 type UserProfile = {
   _id?: string;

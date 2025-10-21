@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { LogIn, UserPlus, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "https://hub-jogador-app.vercel.app/";
 
 const Auth = () => {
   const navigate = useNavigate();
